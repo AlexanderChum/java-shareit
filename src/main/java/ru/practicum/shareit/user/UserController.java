@@ -1,6 +1,6 @@
 package ru.practicum.shareit.user;
 
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,23 +19,23 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> addNewUser(@RequestBody User user) {
+    public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody User user) {
         return ResponseEntity.ok(userService.addNewUser(user));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user,
-                                           @PathVariable @Positive Long id) {
-        return ResponseEntity.ok(userService.updateUser(user, id));
+    public ResponseEntity<UserDto> updateUser(@RequestBody User user,
+                                           @PathVariable String id) {
+        return ResponseEntity.ok(userService.updateUser(user, Long.parseLong(id)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getUserById(Long.parseLong(id)));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable @Positive Long id) {
-        userService.deleteUser(id);
+    public void deleteUser(@PathVariable String id) {
+        userService.deleteUser(Long.parseLong(id));
     }
 }

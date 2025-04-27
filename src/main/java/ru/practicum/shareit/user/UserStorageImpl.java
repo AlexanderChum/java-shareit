@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -12,18 +11,19 @@ public class UserStorageImpl implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
     private AtomicLong keyCounter = new AtomicLong(0);
 
-    public User addNewUser(User user) {
-        users.put(generateUniqueKey(), user);
-        return user;
-    }
-
-    public User updateUser(User user, Long id) {
+    public UserDto addNewUser(User user) {
+        Long id = generateUniqueKey();
         users.put(id, user);
-        return user;
+        return new UserDto(id, user.getName(), user.getEmail());
     }
 
-    public User getUserById(Long id) {
-        return users.get(id);
+    public UserDto updateUser(User user, Long id) {
+        users.put(id, user);
+        return new UserDto(id, user.getName(), user.getEmail());
+    }
+
+    public UserDto getUserById(Long id) {
+        return new UserDto(id, users.get(id).getName(), users.get(id).getEmail());
     }
 
     public void deleteUser(Long id) {

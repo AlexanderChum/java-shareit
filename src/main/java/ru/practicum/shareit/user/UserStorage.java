@@ -4,11 +4,11 @@ import java.util.Map;
 
 public interface UserStorage {
 
-    User addNewUser(User user);
+    UserDto addNewUser(User user);
 
-    User updateUser(User user, Long id);
+    UserDto updateUser(User user, Long id);
 
-    User getUserById(Long id);
+    UserDto getUserById(Long id);
 
     void deleteUser(Long id);
 

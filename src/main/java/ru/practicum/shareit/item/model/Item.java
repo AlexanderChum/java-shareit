@@ -1,33 +1,27 @@
 package ru.practicum.shareit.item.model;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
-
 @Data
 @RequiredArgsConstructor
 public class Item {
 
-    private Long itemId;
-
     @NotNull(message = "Название для вещи должно быть задано")
+    @NotBlank(message = "Название вещи не может быть пустым")
     private String name;
 
+    @NotNull(message = "Описание для вещи должно быть задано")
     private String description;
 
-    @NotNull(message = "Статус для вещи должен задан")
-    private String status;
+    @NotNull(message = "Статус для вещи должен быть задан")
+    private Boolean available;
 
     private List<String> feedbackReviews;
 
-    @NotNull(message = "У владельца вещи должен быть id")
-    @Positive(message = "Id владельца вещи должен быть положительный")
     private Long ownerId;
 }

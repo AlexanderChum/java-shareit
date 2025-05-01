@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +25,9 @@ public class UserStorageImpl implements UserStorage {
     }
 
     public UserDto getUserById(Long id) {
-        return new UserDto(id, users.get(id).getName(), users.get(id).getEmail());
+        if (users.containsKey(id)) {
+            return new UserDto(id, users.get(id).getName(), users.get(id).getEmail());
+        } else return null;
     }
 
     public void deleteUser(Long id) {

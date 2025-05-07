@@ -31,7 +31,11 @@ public class UserStorageImpl implements UserStorage {
 
     public Optional<UserDto> getUserById(Long id) {
         log.info("Получен запрос в репозиторий на получение пользователя");
-        return Optional.ofNullable(UserMapper.toUserDto(users.get(id), id));
+        User user = users.get(id);
+        if (user == null) {
+            return Optional.empty();
+        }
+        return Optional.of(UserMapper.toUserDto(user, id));
     }
 
     public void deleteUser(Long id) {

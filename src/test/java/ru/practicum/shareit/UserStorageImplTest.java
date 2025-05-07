@@ -75,6 +75,6 @@ class UserStorageImplTest {
 
         storage.deleteUser(added.getId());
 
-        assertNull(storage.getUserById(added.getId()));
+        assertTrue(storage.getUserById(added.getId()).isEmpty());
     }
 }

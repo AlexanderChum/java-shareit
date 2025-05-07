@@ -34,7 +34,11 @@ public class ItemStorageImpl implements ItemStorage {
 
     public Optional<ItemDto> getItemById(Long id) {
         log.info("Получен запрос в репозиторий на получение предмета по id");
-        return Optional.ofNullable(ItemMapper.toItemDto(items.get(id), id));
+        Item item = items.get(id);
+        if (item == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(ItemMapper.toItemDto(item, id));
     }
 
     public List<Item> getAllItems() {

@@ -50,8 +50,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void userExistence(Long userId) {
-        if (null == (userStorage.getUserById(userId))) {
-            throw new EntityNotFoundException("Пользователь с таким id не найден");
-        }
+        userStorage.getUserById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
     }
 }

@@ -11,11 +11,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Item {
 
-    @NotNull(message = "Название для вещи должно быть задано")
-    @NotBlank(message = "Название вещи не может быть пустым")
+    @NotBlank(message = "Название для вещи должно быть задано")
     private String name;
 
-    @NotNull(message = "Описание для вещи должно быть задано")
+    @NotBlank(message = "Описание для вещи должно быть задано")
     private String description;
 
     @NotNull(message = "Статус для вещи должен быть задан")

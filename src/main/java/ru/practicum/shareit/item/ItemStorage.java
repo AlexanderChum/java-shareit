@@ -4,14 +4,15 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemStorage {
 
-    ItemDto addNewItem(Item item);
+    Optional<ItemDto> addNewItem(Item item);
 
-    ItemDto updateItem(Item item, Long id);
+    Optional<ItemDto> updateItem(Item item, Long id);
 
-    ItemDto getItemById(Long id);
+    Optional<ItemDto> getItemById(Long id);
 
     List<Item> getAllOwnerItems(Long userId);
 

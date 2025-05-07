@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.model;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +11,7 @@ public class User {
 
     private String name;
 
-    @Email
-    @NotNull
+    @Email(message = "в качестве email указана не почта")
+    @NotBlank(message = "email не может быть пустым")
     private String email;
 }

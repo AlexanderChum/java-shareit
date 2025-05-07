@@ -2,6 +2,7 @@ package ru.practicum.shareit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.error.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.user.UserStorageImpl;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -29,7 +30,8 @@ class UserStorageImplTest {
 
     @Test
     void addNewUserShouldReturnUserDtoWithIdAndCorrectFields() {
-        UserDto dto = storage.addNewUser(user1);
+        UserDto dto = storage.addNewUser(user1)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был создан"));
 
         assertNotNull(dto.getId());
         assertEquals("TestUser1", dto.getName());
@@ -38,9 +40,11 @@ class UserStorageImplTest {
 
     @Test
     void getUserByIdShouldReturnCorrectUserDto() {
-        UserDto added = storage.addNewUser(user2);
+        UserDto added = storage.addNewUser(user2)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был создан"));
 
-        UserDto found = storage.getUserById(added.getId());
+        UserDto found = storage.getUserById(added.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был найден"));
 
         assertNotNull(found);
         assertEquals(added.getId(), found.getId());
@@ -50,12 +54,14 @@ class UserStorageImplTest {
 
     @Test
     void updateUserShouldUpdateUserFields() {
-        UserDto added = storage.addNewUser(user1);
+        UserDto added = storage.addNewUser(user1)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был создан"));
 
         user1.setName("TestUser1Update");
         user1.setEmail("TestUser1@yandex.ru");
 
-        UserDto updatedDto = storage.updateUser(user1, added.getId());
+        UserDto updatedDto = storage.updateUser(user1, added.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был обновлен"));
 
         assertEquals(added.getId(), updatedDto.getId());
         assertEquals("TestUser1Update", updatedDto.getName());
@@ -64,7 +70,8 @@ class UserStorageImplTest {
 
     @Test
     void deleteUserShouldRemoveUser() {
-        UserDto added = storage.addNewUser(user2);
+        UserDto added = storage.addNewUser(user2)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был создан"));
 
         storage.deleteUser(added.getId());
 

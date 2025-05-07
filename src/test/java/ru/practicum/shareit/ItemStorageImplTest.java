@@ -2,6 +2,7 @@ package ru.practicum.shareit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.error.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.item.ItemStorageImpl;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -35,7 +36,8 @@ class ItemStorageImplTest {
 
     @Test
     void addNewItemShouldReturnItemDtoWithIdAndCorrectFields() {
-        ItemDto dto = storage.addNewItem(item1);
+        ItemDto dto = storage.addNewItem(item1)
+                .orElseThrow(() -> new EntityNotFoundException("Предмет не был создан"));
 
         assertNotNull(dto.getId());
         assertEquals("TestItem1", dto.getName());
@@ -45,13 +47,15 @@ class ItemStorageImplTest {
 
     @Test
     void updateItemShouldUpdateFields() {
-        ItemDto added = storage.addNewItem(item1);
+        ItemDto added = storage.addNewItem(item1)
+                .orElseThrow(() -> new EntityNotFoundException("Предмет не был создан"));
 
         item1.setName("UpdatedTestItem1");
         item1.setDescription("UpdatedTestDescription1");
         item1.setAvailable(false);
 
-        ItemDto updated = storage.updateItem(item1, added.getId());
+        ItemDto updated = storage.updateItem(item1, added.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Предмет не был обновлен"));
 
         assertEquals(added.getId(), updated.getId());
         assertEquals("UpdatedTestItem1", updated.getName());
@@ -61,9 +65,11 @@ class ItemStorageImplTest {
 
     @Test
     void getItemByIdShouldReturnCorrectItemDto() {
-        ItemDto added = storage.addNewItem(item2);
+        ItemDto added = storage.addNewItem(item2)
+                .orElseThrow(() -> new EntityNotFoundException("Предмет не был создан"));
 
-        ItemDto found = storage.getItemById(added.getId());
+        ItemDto found = storage.getItemById(added.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Предмет не найден"));
 
         assertNotNull(found);
         assertEquals(added.getId(), found.getId());

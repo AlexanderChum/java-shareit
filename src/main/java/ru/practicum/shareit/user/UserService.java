@@ -1,39 +1,14 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.error.exceptions.EntityConflictException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
-    private final UserStorage userStorage;
+public interface UserService {
+    UserDto addNewUser(User user);
 
-    public UserDto addNewUser(User user) {
-        uniqueEmailCheck(user.getEmail());
-        return userStorage.addNewUser(user);
-    }
+    UserDto updateUser(User user, Long userId);
 
-    public UserDto updateUser(User user, Long id) {
-        if (null != (user.getEmail())) uniqueEmailCheck(user.getEmail());
-        return userStorage.updateUser(user, id);
-    }
+    UserDto getUserById(Long userId);
 
-    public UserDto getUserById(Long id) {
-        return userStorage.getUserById(id);
-    }
-
-    public void deleteUser(Long id) {
-        userStorage.deleteUser(id);
-    }
-
-    private void uniqueEmailCheck(String email) {
-        for (User user : userStorage.getUsers().values()) {
-            if (email.equals(user.getEmail())) {
-                throw new EntityConflictException("Такой email уже используется, используйте другой");
-            }
-        }
-    }
+    void deleteUser(Long userId);
 }

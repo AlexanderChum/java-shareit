@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.model.User;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
 
     public UserDto addNewUser(User user) {

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class User {
 
+    @NotBlank(message = "Имя не может быть пустым")
     private String name;
 
     @Email(message = "в качестве email указана не почта")

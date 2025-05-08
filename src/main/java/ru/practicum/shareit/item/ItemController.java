@@ -27,7 +27,7 @@ import static ru.practicum.shareit.constants.Constants.REQUESTHEADERID;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemServiceImpl itemService;
+    private final ItemService itemService;
 
     @PostMapping
     public ResponseEntity<ItemDto> addNewItem(@Valid @RequestBody Item item,
@@ -53,13 +53,13 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Item>> getAllOwnerItems(@RequestHeader(name = REQUESTHEADERID) Long userId) {
+    public ResponseEntity<List<ItemDto>> getAllOwnerItems(@RequestHeader(name = REQUESTHEADERID) Long userId) {
         log.info("Поступил запрос на получение всех предметов пользователя");
         return ResponseEntity.ok(itemService.getAllOwnerItems(userId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Item>> getAllBySearch(@RequestParam String text) {
+    public ResponseEntity<List<ItemDto>> getAllBySearch(@RequestParam String text) {
         log.info("Поступил запрос на поиск предмета по поиску");
         return ResponseEntity.ok(itemService.getItemsBySearch(text));
     }

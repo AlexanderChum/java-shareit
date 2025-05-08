@@ -17,21 +17,20 @@ public class UserServiceImpl implements UserService {
     public UserDto addNewUser(User user) {
         uniqueEmailCheck(user.getEmail());
         log.info("Пройдена проверка на уникальность email, отправка запроса в репозиторий");
-        return userStorage.addNewUser(user)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был создан"));
+        return UserMapper.toUserDto(user, userStorage.addNewUser(user));
     }
 
     public UserDto updateUser(User user, Long id) {
         if (null != (user.getEmail())) uniqueEmailCheck(user.getEmail());
         log.info("Пройдена проверка на уникальность email, отправка запроса в репозиторий");
-        return userStorage.updateUser(user, id)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был обновлен"));
+        return UserMapper.toUserDto(userStorage.updateUser(user, id), id);
     }
 
     public UserDto getUserById(Long id) {
         log.info("Сделан запрос в сервис на получение пользователя по userId");
-        return userStorage.getUserById(id)
+        User user = userStorage.getUserById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь не был найден"));
+        return UserMapper.toUserDto(user, id);
     }
 
     public void deleteUser(Long id) {

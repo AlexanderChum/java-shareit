@@ -2,12 +2,9 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,56 +14,55 @@ import java.util.stream.Collectors;
 @Repository
 public class ItemStorageImpl implements ItemStorage {
     private final Map<Long, Item> items = new HashMap<>();
-    private AtomicLong keyCounter = new AtomicLong(0);
+    private final AtomicLong keyCounter = new AtomicLong(0);
 
-    public Optional<ItemDto> addNewItem(Item item) {
+    public Long addNewItem(Item item) {
         Long id = generateUniqueKey();
         items.put(id, item);
         log.info("Предмет добавлен в мапу");
-        return Optional.ofNullable(ItemMapper.toItemDto(item, id));
+        return id;
     }
 
-    public Optional<ItemDto> updateItem(Item item, Long id) {
+    public Item updateItem(Item item, Long id) {
         items.put(id, item);
         log.info("Предмет обновлен в мапе");
-        return Optional.ofNullable(ItemMapper.toItemDto(item, id));
+        return item;
     }
 
-    public Optional<ItemDto> getItemById(Long id) {
+    public Optional<Item> getItemById(Long id) {
         log.info("Получен запрос в репозиторий на получение предмета по id");
-        Item item = items.get(id);
-        if (item == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(ItemMapper.toItemDto(item, id));
+        return Optional.ofNullable(items.get(id));
     }
 
-    public List<Item> getAllItems() {
+    public Map<Long, Item> getAllItems() {
         log.info("Получен запрос в репозиторий на получение всех предметов");
-        return new ArrayList<>(items.values());
+        return new HashMap<>(items);
     }
 
-    public List<Item> getAllOwnerItems(Long userId) {
+    public Map<Long, Item> getAllOwnerItems(Long userId) {
         log.info("Получен запрос в репозиторий на получение всех предметов пользователя");
-        return getAllItems().stream()
-                .filter(item -> userId.equals(item.getOwnerId()))
-                .collect(Collectors.toList());
+        return items.entrySet().stream()
+                .filter(entry -> entry.getValue().getOwnerId().equals(userId))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public List<Item> getItemsBySearch(String text) {
+    public Map<Long, Item> getItemsBySearch(String text) {
         if (text == null || text.isBlank()) {
             log.info("Получен пустой текст");
-            return List.of();
+            return Map.of();
         }
 
         final String cleanKeyword = text.trim().toLowerCase();
 
         log.info("Получен запрос в репозиторий на получение предметов по поиску");
-        return items.values().stream()
-                .filter(entity -> containsIgnoreCase(entity.getName(), cleanKeyword)
-                        || containsIgnoreCase(entity.getDescription(), cleanKeyword))
-                .filter(entity -> entity.getAvailable().equals(true))
-                .collect(Collectors.toList());
+
+        Map<Long, Item> result = new HashMap<>();
+        for (Long id : items.keySet()) {
+            if ((containsIgnoreCase(items.get(id).getName(), cleanKeyword) ||
+                    containsIgnoreCase(items.get(id).getDescription(), cleanKeyword)) &&
+                    items.get(id).getAvailable().equals(true)) result.put(id, items.get(id));
+        }
+        return result;
     }
 
     private boolean containsIgnoreCase(String source, String text) {

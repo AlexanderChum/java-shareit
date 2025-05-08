@@ -4,10 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.error.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.item.ItemStorageImpl;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,29 +34,21 @@ class ItemStorageImplTest {
     }
 
     @Test
-    void addNewItemShouldReturnItemDtoWithIdAndCorrectFields() {
-        ItemDto dto = storage.addNewItem(item1)
-                .orElseThrow(() -> new EntityNotFoundException("Предмет не был создан"));
-
-        assertNotNull(dto.getId());
-        assertEquals("TestItem1", dto.getName());
-        assertEquals("TestDescription1", dto.getDescription());
-        assertTrue(dto.getAvailable());
+    void addNewItemShouldReturnItemId() {
+        Long id = storage.addNewItem(item1);
+        assertNotNull(id);
     }
 
     @Test
     void updateItemShouldUpdateFields() {
-        ItemDto added = storage.addNewItem(item1)
-                .orElseThrow(() -> new EntityNotFoundException("Предмет не был создан"));
+        Long addedId = storage.addNewItem(item1);
 
         item1.setName("UpdatedTestItem1");
         item1.setDescription("UpdatedTestDescription1");
         item1.setAvailable(false);
 
-        ItemDto updated = storage.updateItem(item1, added.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Предмет не был обновлен"));
+        Item updated = storage.updateItem(item1, addedId);
 
-        assertEquals(added.getId(), updated.getId());
         assertEquals("UpdatedTestItem1", updated.getName());
         assertEquals("UpdatedTestDescription1", updated.getDescription());
         assertFalse(updated.getAvailable());
@@ -65,56 +56,54 @@ class ItemStorageImplTest {
 
     @Test
     void getItemByIdShouldReturnCorrectItemDto() {
-        ItemDto added = storage.addNewItem(item2)
-                .orElseThrow(() -> new EntityNotFoundException("Предмет не был создан"));
+        Long addedId = storage.addNewItem(item2);
 
-        ItemDto found = storage.getItemById(added.getId())
+        Item found = storage.getItemById(addedId)
                 .orElseThrow(() -> new EntityNotFoundException("Предмет не найден"));
 
         assertNotNull(found);
-        assertEquals(added.getId(), found.getId());
         assertEquals("TestItem2", found.getName());
         assertEquals("TestDescription2", found.getDescription());
     }
 
     @Test
     void getAllItemsShouldReturnAllAddedItems() {
-        storage.addNewItem(item1);
+        Long addedId = storage.addNewItem(item1);
         storage.addNewItem(item2);
 
-        List<Item> all = storage.getAllItems();
+        Map<Long, Item> all = storage.getAllItems();
 
         assertEquals(2, all.size());
-        assertEquals("TestItem1", all.getFirst().getName());
+        assertEquals("TestItem1", all.get(addedId).getName());
     }
 
     @Test
     void getAllOwnerItemsShouldReturnOnlyOwnerItems() {
-        storage.addNewItem(item1);
+        Long addedId = storage.addNewItem(item1);
         storage.addNewItem(item2);
 
-        List<Item> ownerItems = storage.getAllOwnerItems(1L);
+        Map<Long, Item> ownerItems = storage.getAllOwnerItems(1L);
 
         assertEquals(1, ownerItems.size());
-        assertEquals("TestItem1", ownerItems.get(0).getName());
+        assertEquals("TestItem1", ownerItems.get(addedId).getName());
     }
 
     @Test
     void getItemsBySearchShouldReturnMatchingItems() {
-        storage.addNewItem(item1);
+        Long addedId = storage.addNewItem(item1);
         storage.addNewItem(item2);
 
-        List<Item> found = storage.getItemsBySearch("TESTITEM1");
+        Map<Long, Item> found = storage.getItemsBySearch("TESTITEM1");
 
         assertEquals(1, found.size());
-        assertEquals("TestItem1", found.get(0).getName());
+        assertEquals("TestItem1", found.get(addedId).getName());
     }
 
     @Test
     void getItemsBySearchShouldReturnEmptyListForNoMatch() {
         storage.addNewItem(item1);
 
-        List<Item> found = storage.getItemsBySearch("TestItem3");
+        Map<Long, Item> found = storage.getItemsBySearch("TestItem3");
 
         assertTrue(found.isEmpty());
     }

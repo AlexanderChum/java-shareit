@@ -21,7 +21,7 @@ import ru.practicum.shareit.user.model.User;
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody User user) {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateRequest;
 import ru.practicum.shareit.user.model.User;
 
 @Slf4j
@@ -28,20 +29,20 @@ public class UserController {
         log.info("Получен запрос на добавление нового пользователя");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(userService.addNewUser(user));
+                .body(UserMapper.toUserDto(userService.addNewUser(user)));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody User user,
-                                              @PathVariable String id) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
+                                              @PathVariable Long id) {
         log.info("Получен запрос на обновление пользователя");
-        return ResponseEntity.ok(userService.updateUser(user, Long.parseLong(id)));
+        return ResponseEntity.ok(UserMapper.toUserDto(userService.updateUser(userUpdateRequest, id)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         log.info("Получен запрос на получение пользователя по id");
-        return ResponseEntity.ok(userService.getUserById(Long.parseLong(id)));
+        return ResponseEntity.ok(UserMapper.toUserDto(userService.getUserById(id)));
     }
 
     @DeleteMapping("/{id}")

@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.error.exceptions.BookingUnavailableItemException;
+import ru.practicum.shareit.error.exceptions.BookingUpdateAccessRejectedException;
 import ru.practicum.shareit.error.exceptions.EntityConflictException;
 import ru.practicum.shareit.error.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.error.exceptions.ValidationException;
@@ -28,5 +30,17 @@ public class ExceptionsHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleEntityConflictException(EntityConflictException e) {
         return new ErrorResponse("Ошибка при обработке объекта", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBookingUnavailableItem(BookingUnavailableItemException e) {
+        return new ErrorResponse("Предмет не доступен для букирования", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleBookingUpdateAccessRejected(BookingUpdateAccessRejectedException e) {
+        return new ErrorResponse("Доступ запрещен", e.getMessage());
     }
 }

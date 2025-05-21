@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.itemAndComment;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.itemAndComment.dto.ItemDto;
+import ru.practicum.shareit.itemAndComment.dto.ItemUpdateRequest;
+import ru.practicum.shareit.itemAndComment.model.Comment;
+import ru.practicum.shareit.itemAndComment.model.Item;
 
 import java.util.List;
 
-import static ru.practicum.shareit.constants.Constants.REQUESTHEADERID;
+import static ru.practicum.shareit.constants.Constants.REQUEST_HEADER_ID;
 
 @Slf4j
 @RestController
@@ -31,29 +33,29 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> addNewItem(@Valid @RequestBody Item item,
-                                              @RequestHeader(name = REQUESTHEADERID) Long userId) {
+                                              @RequestHeader(name = REQUEST_HEADER_ID) Long userId) {
         log.info("Поступил запрос на добавление предмета");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(itemService.addNewItem(item, userId));
+                .body(ItemMapper.toItemDto(itemService.addNewItem(item, userId)));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ItemDto> updateItem(@RequestBody Item item,
+    public ResponseEntity<ItemDto> updateItem(@RequestBody ItemUpdateRequest itemUpdateRequest,
                                               @PathVariable @Positive Long id,
-                                              @RequestHeader(name = REQUESTHEADERID) Long userId) {
+                                              @RequestHeader(name = REQUEST_HEADER_ID) Long userId) {
         log.info("Поступил запрос на обновление предмета");
-        return ResponseEntity.ok(itemService.updateItem(item, id, userId));
+        return ResponseEntity.ok(ItemMapper.toItemDto(itemService.updateItem(itemUpdateRequest, id, userId)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemDto> getItemById(@PathVariable @Positive Long id) {
         log.info("Поступил запрос на получение предмета по id");
-        return ResponseEntity.ok(itemService.getItemById(id));
+        return ResponseEntity.ok(ItemMapper.toItemDto(itemService.getItemById(id)));
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getAllOwnerItems(@RequestHeader(name = REQUESTHEADERID) Long userId) {
+    public ResponseEntity<List<ItemDto>> getAllOwnerItems(@RequestHeader(name = REQUEST_HEADER_ID) Long userId) {
         log.info("Поступил запрос на получение всех предметов пользователя");
         return ResponseEntity.ok(itemService.getAllOwnerItems(userId));
     }
@@ -62,5 +64,12 @@ public class ItemController {
     public ResponseEntity<List<ItemDto>> getAllBySearch(@RequestParam String text) {
         log.info("Поступил запрос на поиск предмета по поиску");
         return ResponseEntity.ok(itemService.getItemsBySearch(text));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<Comment> addNewComment(@PathVariable("itemId") Long itemId,
+                                                 @RequestHeader(name = REQUEST_HEADER_ID) Long userId,
+                                                 @RequestBody @Valid Comment comment) {
+        return ResponseEntity.ok(itemService.addNewComment(comment, itemId, userId));
     }
 }

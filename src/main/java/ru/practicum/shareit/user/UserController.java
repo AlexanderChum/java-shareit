@@ -29,20 +29,20 @@ public class UserController {
         log.info("Получен запрос на добавление нового пользователя");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(UserMapper.toUserDto(userService.addNewUser(user)));
+                .body(userService.addNewUser(user));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest,
                                               @PathVariable Long id) {
         log.info("Получен запрос на обновление пользователя");
-        return ResponseEntity.ok(UserMapper.toUserDto(userService.updateUser(userUpdateRequest, id)));
+        return ResponseEntity.ok(userService.updateUser(userUpdateRequest, id));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         log.info("Получен запрос на получение пользователя по id");
-        return ResponseEntity.ok(UserMapper.toUserDto(userService.getUserById(id)));
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @DeleteMapping("/{id}")

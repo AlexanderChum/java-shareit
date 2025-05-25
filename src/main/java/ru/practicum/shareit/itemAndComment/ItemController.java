@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.itemAndComment.dto.CommentDto;
 import ru.practicum.shareit.itemAndComment.dto.ItemDto;
 import ru.practicum.shareit.itemAndComment.dto.ItemUpdateRequest;
 import ru.practicum.shareit.itemAndComment.model.Comment;
@@ -37,21 +38,21 @@ public class ItemController {
         log.info("Поступил запрос на добавление предмета");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ItemMapper.toItemDto(itemService.addNewItem(item, userId)));
+                .body(itemService.addNewItem(item, userId));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ItemDto> updateItem(@RequestBody ItemUpdateRequest itemUpdateRequest,
+    public ResponseEntity<ItemDto> updateItem(@Valid @RequestBody ItemUpdateRequest itemUpdateRequest,
                                               @PathVariable @Positive Long id,
                                               @RequestHeader(name = REQUEST_HEADER_ID) Long userId) {
         log.info("Поступил запрос на обновление предмета");
-        return ResponseEntity.ok(ItemMapper.toItemDto(itemService.updateItem(itemUpdateRequest, id, userId)));
+        return ResponseEntity.ok(itemService.updateItem(itemUpdateRequest, id, userId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemDto> getItemById(@PathVariable @Positive Long id) {
         log.info("Поступил запрос на получение предмета по id");
-        return ResponseEntity.ok(ItemMapper.toItemDto(itemService.getItemById(id)));
+        return ResponseEntity.ok(itemService.getItemById(id));
     }
 
     @GetMapping
@@ -67,9 +68,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Comment> addNewComment(@PathVariable("itemId") Long itemId,
-                                                 @RequestHeader(name = REQUEST_HEADER_ID) Long userId,
-                                                 @RequestBody @Valid Comment comment) {
+    public ResponseEntity<CommentDto> addNewComment(@Valid @PathVariable("itemId") Long itemId,
+                                                    @RequestHeader(name = REQUEST_HEADER_ID) Long userId,
+                                                    @RequestBody @Valid Comment comment) {
         return ResponseEntity.ok(itemService.addNewComment(comment, itemId, userId));
     }
 }

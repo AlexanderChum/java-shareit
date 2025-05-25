@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.constants.BookingStatus;
 import ru.practicum.shareit.itemAndComment.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 public class BookingDto {
     private Long id;

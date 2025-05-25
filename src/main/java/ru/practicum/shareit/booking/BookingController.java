@@ -35,21 +35,21 @@ public class BookingController {
         log.info("Поступил запрос на добавление букинга");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(BookingMapper.toBookingDto(bookingService.addNewBooking(bookingRequest, userId)));
+                .body(bookingService.addNewBooking(bookingRequest, userId));
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> updateBooking(@RequestHeader(name = REQUEST_HEADER_ID) Long userId,
+    public ResponseEntity<BookingDto> updateBooking(@Valid @RequestHeader(name = REQUEST_HEADER_ID) Long userId,
                                                     @PathVariable @Positive Long bookingId,
                                                     @RequestParam("approved") Boolean approved) {
         log.info("Поступил запрос на обновление букинга");
-        return ResponseEntity.ok(BookingMapper.toBookingDto(bookingService.updateBooking(bookingId, userId, approved)));
+        return ResponseEntity.ok(bookingService.updateBooking(bookingId, userId, approved));
     }
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<BookingDto> getByBookingId(@PathVariable @Positive Long bookingId) {
         log.info("Поступил запрос на получение букинга");
-        return ResponseEntity.ok(BookingMapper.toBookingDto(bookingService.getBookingById(bookingId)));
+        return ResponseEntity.ok(bookingService.getBookingById(bookingId));
     }
 
     @GetMapping("/owner")

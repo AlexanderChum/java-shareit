@@ -6,26 +6,24 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.constants.validators.StartBeforeEnd;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @StartBeforeEnd
 public class BookingRequest {
 
     @Positive
     @NotNull
-    private final Long itemId;
+    private Long itemId;
 
     @NotNull
-    private final LocalDateTime start;
+    private LocalDateTime start;
 
     @NotNull
     @Future
-    private final LocalDateTime end;
+    private LocalDateTime end;
 }

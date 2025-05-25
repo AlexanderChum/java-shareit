@@ -7,7 +7,7 @@ import ru.practicum.shareit.itemAndComment.model.Item;
 
 import java.util.List;
 
-public interface ItemStorage extends JpaRepository<Item, Long> {
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("SELECT i FROM Item i WHERE " +
             "(LOWER(i.name) LIKE LOWER(CONCAT('%', :text, '%')) OR " +
@@ -15,5 +15,5 @@ public interface ItemStorage extends JpaRepository<Item, Long> {
             "i.available = true")
     List<Item> findItemsByTextSearch(@Param("text") String text);
 
-    List<Item> findByOwnerId(Long ownerId);
+    List<Item> findByUserId(Long ownerId);
 }

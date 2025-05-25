@@ -1,77 +1,71 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequest;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.constants.BookingStatus;
 import ru.practicum.shareit.error.exceptions.BookingUnavailableItemException;
 import ru.practicum.shareit.error.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.error.exceptions.ValidationException;
-import ru.practicum.shareit.itemAndComment.ItemService;
+import ru.practicum.shareit.itemAndComment.ItemRepository;
 import ru.practicum.shareit.itemAndComment.model.Item;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookingServiceImpl implements BookingService {
-    private final BookingStorage bookingStorage;
-    private final ItemService itemService;
-    private final UserService userService;
+    private final BookingRepository bookingRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final BookingMapper bookingMapper;
 
-    /*
-    Добавил userStorage только для прохождения одного из тестов. Для него требуется проверка пользователя оформляющего
-    запрос на вещь, но в данный момент у нас такого нет, и как я понимаю, эта проверка будет корректно реализовываться
-    в задании следующего спринта. В данный момент для теста требуется код 400, 403, 500. Оставил заглушку для этого
-    в updateBooking
-     */
-    private final UserStorage userStorage;
-
-    public Booking addNewBooking(BookingRequest bookingRequest, Long userId) {
-        User user = userService.getUserById(userId);
-        Item item = itemService.getItemById(bookingRequest.getItemId());
+    public BookingDto addNewBooking(BookingRequest bookingRequest, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не был найден"));
+        Item item = itemRepository.findById(bookingRequest.getItemId())
+                .orElseThrow(() -> new EntityNotFoundException("Предмет не был найден"));
 
         log.info("Проверка доступности вещи для букирования");
         if (!item.getAvailable()) throw new BookingUnavailableItemException("Букинг данной вещи недоступен");
 
-        return bookingStorage.save(BookingMapper.bookingRequestToBooking(bookingRequest, user, item));
+        return bookingMapper.toBookingDto(bookingRepository.save(bookingMapper.toBooking(bookingRequest, user, item)));
     }
 
-    public Booking updateBooking(Long bookingId, Long userId, Boolean approved) {
-        Booking booking = bookingStorage.findById(bookingId)
+    public BookingDto updateBooking(Long bookingId, Long userId, Boolean approved) {
+        Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new EntityNotFoundException("Букинг не найден"));
 
-        User user = userStorage.findById(userId) //та самая заглушка
+        User user = userRepository.findById(userId) //та самая заглушка
                 .orElseThrow(() -> new ValidationException("Такого пользователя не найдено"));
+        //нужен конкретный код ошибки под данное исключение
 
         log.info("Получен запрос в сервис на обновление статуса букинга");
-        Booking bookingToUpdate = BookingMapper.bookingStatusUpdate(booking, approved);
-        return bookingStorage.save(bookingToUpdate);
+        BookingStatus status = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
+        Booking bookingToUpdate = bookingMapper.updateBookingStatus(booking, status);
+        return bookingMapper.toBookingDto(bookingToUpdate);
     }
 
-    public Booking getBookingById(Long bookingId) {
+    public BookingDto getBookingById(Long bookingId) {
         log.info("Получен запрос в сервис на получение букинга по id");
-        return bookingStorage.findById(bookingId)
+        Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new EntityNotFoundException("Букинг не найден"));
+        return bookingMapper.toBookingDto(booking);
     }
 
     public List<BookingDto> getAllBookingsByUserId(Long userId) {
         log.info("Получен запрос в сервис на получение всех букингов пользователя");
-        userService.getUserById(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Такого пользователя нет"));
 
-        return convertListToDtoList(bookingStorage.findAllByUserId(userId));
-    }
-
-    public List<BookingDto> convertListToDtoList(List<Booking> bookingList) {
-        return bookingList.stream()
-                .map(BookingMapper::toBookingDto)
-                .collect(Collectors.toList());
+        return bookingMapper.toBookingDtoList(bookingRepository.findAllByUserId(userId));
     }
 }

@@ -17,6 +17,8 @@
 
 	<properties>
 		<java.version>21</java.version>
+		<postgres.version>42.2.10</postgres.version>
+		<mapstructFinal.version>1.5.5.Final</mapstructFinal.version>
 	</properties>
 
 	<dependencies>
@@ -75,7 +77,18 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.10</version>
+			<version>${postgres.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstructFinal.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstructFinal.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

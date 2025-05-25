@@ -9,9 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "comments")
 public class Comment {
 
@@ -28,6 +27,7 @@ public class Comment {
     private Long id;
 
     @Column(name = "comment")
+    @Size(min = 1, max = 500, message = "Неверная длина имени")
     private String text;
 
     @Column(name = "created")

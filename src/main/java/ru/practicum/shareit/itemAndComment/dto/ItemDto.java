@@ -1,13 +1,15 @@
 package ru.practicum.shareit.itemAndComment.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.itemAndComment.model.Comment;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class ItemDto {
     private Long id;

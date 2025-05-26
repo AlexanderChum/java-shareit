@@ -19,35 +19,35 @@ public class ExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(ValidationException e) {
-        log.info("Ошибка валидации");
+        log.debug("Ошибка валидации");
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(EntityNotFoundException e) {
-        log.info("Ошибка при поиске сущности");
+        log.debug("Ошибка при поиске сущности");
         return new ErrorResponse("Объект не найден", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleEntityConflictException(EntityConflictException e) {
-        log.info("Ошибка при обработке сущности");
+        log.debug("Ошибка при обработке сущности");
         return new ErrorResponse("Ошибка при обработке объекта", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBookingUnavailableItem(BookingUnavailableItemException e) {
-        log.info("Ошибка при проверке доступности для букирования");
+        log.debug("Ошибка при проверке доступности для букирования");
         return new ErrorResponse("Предмет не доступен для букирования", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleBookingUpdateAccessRejected(BookingUpdateAccessRejectedException e) {
-        log.info("Ошибка при проверке доступа");
+        log.debug("Ошибка при проверке доступа");
         return new ErrorResponse("Доступ запрещен", e.getMessage());
     }
 }

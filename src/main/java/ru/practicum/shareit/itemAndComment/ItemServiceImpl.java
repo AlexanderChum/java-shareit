@@ -22,7 +22,6 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
@@ -31,12 +30,14 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
 
+    @Transactional
     public ItemDto addNewItem(Item item, Long userId) {
         item.setUser(userExistence(userId));
         log.info("Проведена проверка на существование пользователя и присвоен userId предмету");
         return itemMapper.toItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     public ItemDto updateItem(ItemUpdateRequest itemUpdateRequest, Long id, Long userId) {
         itemUpdateRequest.setUser(userExistence(userId));
 
@@ -47,6 +48,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toItemDto(itemToUpdate);
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public ItemDto getItemById(Long id) {
         log.info("Поступил запрос в сервис на получение предмета");
         Item item = itemRepository.findById(id)
@@ -54,17 +56,20 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toItemDto(item);
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<ItemDto> getAllOwnerItems(Long userId) {
         log.info("Поступил запрос в сервис на получение всех предметов пользователя");
         return itemMapper.toItemDtoList(itemRepository.findByUserId(userId));
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<ItemDto> getItemsBySearch(String text) {
         log.info("Поступил запрос в сервис на получение всех предметов по поиску");
         if (text.isBlank()) return List.of();
         return itemMapper.toItemDtoList(itemRepository.findItemsByTextSearch(text));
     }
 
+    @Transactional
     public CommentDto addNewComment(Comment comment, Long itemId, Long userId) {
         log.info("Поступил запрос на добавление нового комментария");
         User user = userExistence(userId);

@@ -21,13 +21,13 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingMapper bookingMapper;
 
+    @Transactional
     public BookingDto addNewBooking(BookingRequest bookingRequest, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь не был найден"));
@@ -40,6 +40,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingDto(bookingRepository.save(bookingMapper.toBooking(bookingRequest, user, item)));
     }
 
+    @Transactional
     public BookingDto updateBooking(Long bookingId, Long userId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new EntityNotFoundException("Букинг не найден"));
@@ -54,6 +55,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingDto(bookingToUpdate);
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public BookingDto getBookingById(Long bookingId) {
         log.info("Получен запрос в сервис на получение букинга по id");
         Booking booking = bookingRepository.findById(bookingId)
@@ -61,6 +63,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingDto(booking);
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<BookingDto> getAllBookingsByUserId(Long userId) {
         log.info("Получен запрос в сервис на получение всех букингов пользователя");
         userRepository.findById(userId)

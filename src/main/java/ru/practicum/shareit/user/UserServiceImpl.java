@@ -13,17 +13,18 @@ import ru.practicum.shareit.user.model.User;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    @Transactional
     public UserDto addNewUser(User user) {
         uniqueEmailCheck(user.getEmail());
         log.info("Пройдена проверка на уникальность email, отправка запроса в репозиторий");
         return userMapper.toUserDto(userRepository.save(user));
     }
 
+    @Transactional
     public UserDto updateUser(UserUpdateRequest userUpdateRequest, Long id) {
         if (null != (userUpdateRequest.getEmail())) uniqueEmailCheck(userUpdateRequest.getEmail());
         userUpdateRequest.setId(id);
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(userToUpdate);
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
         log.info("Сделан запрос в сервис на получение пользователя по userId");
         User user = userRepository.findById(id)
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(user);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         log.info("Сделан запрос на удаление пользователя");
         userRepository.deleteById(id);

@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -36,8 +34,7 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateBooking(long userId, long bookingId, boolean approved) {
-        Map<String, Object> params = Map.of("approved", approved);
-        return patch("/" + bookingId + "?approved={approved}", userId, params);
+        return patch("/" + bookingId + "?approved=" + approved, userId);
     }
 
     public ResponseEntity<Object> getAllOwnerBookings(long userId) {

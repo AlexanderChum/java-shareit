@@ -1,7 +1,5 @@
 package ru.practicum.shareit.itemAndComment;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,7 +31,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<ItemDto> addNewItem(@Valid @RequestBody ItemNewRequest itemNewRequest,
+    public ResponseEntity<ItemDto> addNewItem(@RequestBody ItemNewRequest itemNewRequest,
                                               @RequestHeader(name = REQUEST_HEADER_ID) Long userId) {
         log.info("Поступил запрос на добавление предмета");
         return ResponseEntity
@@ -42,15 +40,15 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ItemDto> updateItem(@Valid @RequestBody ItemUpdateRequest itemUpdateRequest,
-                                              @PathVariable @Positive Long id,
+    public ResponseEntity<ItemDto> updateItem(@RequestBody ItemUpdateRequest itemUpdateRequest,
+                                              @PathVariable Long id,
                                               @RequestHeader(name = REQUEST_HEADER_ID) Long userId) {
         log.info("Поступил запрос на обновление предмета");
         return ResponseEntity.ok(itemService.updateItem(itemUpdateRequest, id, userId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemDto> getItemById(@PathVariable @Positive Long id) {
+    public ResponseEntity<ItemDto> getItemById(@PathVariable Long id) {
         log.info("Поступил запрос на получение предмета по id");
         return ResponseEntity.ok(itemService.getItemById(id));
     }
@@ -68,9 +66,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<CommentDto> addNewComment(@Valid @PathVariable("itemId") Long itemId,
+    public ResponseEntity<CommentDto> addNewComment(@PathVariable("itemId") Long itemId,
                                                     @RequestHeader(name = REQUEST_HEADER_ID) Long userId,
-                                                    @RequestBody @Valid Comment comment) {
+                                                    @RequestBody Comment comment) {
         return ResponseEntity.ok(itemService.addNewComment(comment, itemId, userId));
     }
 }

@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,8 +36,14 @@ public class UserControllerTest {
     @MockBean
     private UserClient userClient;
 
-    private UserRequestDto validUserDto = new UserRequestDto("Test user", "test@ya.ru");
-    private UserUpdateRequestDto validUpdateDto = new UserUpdateRequestDto(1L, "Updated user", "updated@ya.ru");
+    private UserRequestDto validUserDto;
+    private UserUpdateRequestDto validUpdateDto;
+
+    @BeforeEach
+    void setUp() {
+        validUserDto = new UserRequestDto("Test user", "test@ya.ru");
+        validUpdateDto = new UserUpdateRequestDto(1L, "Updated user", "updated@ya.ru");
+    }
 
     @Test
     void addNewUserValidRequestReturnsOk() throws Exception {

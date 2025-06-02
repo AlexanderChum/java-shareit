@@ -1,5 +1,6 @@
 package ru.practicum.shareit;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,8 +45,14 @@ class ItemRequestServiceImplTest {
     @InjectMocks
     private ItemRequestServiceImpl itemRequestService;
 
-    private User testUser = new User(1L, "Test User", "test@ya.ru");
-    private ItemRequest testItemRequest = new ItemRequest(1L, "Test request", testUser, LocalDateTime.now(), null);
+    private User testUser;
+    private ItemRequest testItemRequest;
+
+    @BeforeEach
+    void setUp() {
+        testUser = new User(1L, "Test User", "test@ya.ru");
+        testItemRequest = new ItemRequest(1L, "Test request", testUser, LocalDateTime.now(), null);
+    }
 
     private ItemRequestDto createTestRequestDto() {
         ItemRequestDto dto = new ItemRequestDto();

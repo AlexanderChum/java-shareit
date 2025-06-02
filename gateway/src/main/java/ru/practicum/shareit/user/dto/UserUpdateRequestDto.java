@@ -13,6 +13,7 @@ import lombok.Setter;
 public class UserUpdateRequestDto {
     private Long id;
     private String name;
+
     @Email
     private String email;
 }

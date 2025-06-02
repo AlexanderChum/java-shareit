@@ -11,8 +11,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,15 +32,12 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Название для вещи должно быть задано")
     @Column(name = "name")
     private String name;
 
-    @NotBlank(message = "Описание для вещи должно быть задано")
     @Column(name = "description")
     private String description;
 
-    @NotNull(message = "Статус для вещи должен быть задан")
     @Column(name = "status")
     private Boolean available;
 

@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<BookingDto> addNewBooking(@Valid @RequestBody BookingRequest bookingRequest,
+    public ResponseEntity<BookingDto> addNewBooking(@RequestBody BookingRequest bookingRequest,
                                                     @RequestHeader(name = REQUEST_HEADER_ID) Long userId) {
         log.info("Поступил запрос на добавление букинга");
         return ResponseEntity
@@ -39,15 +37,15 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> updateBooking(@Valid @RequestHeader(name = REQUEST_HEADER_ID) Long userId,
-                                                    @PathVariable @Positive Long bookingId,
+    public ResponseEntity<BookingDto> updateBooking(@RequestHeader(name = REQUEST_HEADER_ID) Long userId,
+                                                    @PathVariable Long bookingId,
                                                     @RequestParam("approved") Boolean approved) {
         log.info("Поступил запрос на обновление букинга");
         return ResponseEntity.ok(bookingService.updateBooking(bookingId, userId, approved));
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> getByBookingId(@PathVariable @Positive Long bookingId) {
+    public ResponseEntity<BookingDto> getByBookingId(@PathVariable Long bookingId) {
         log.info("Поступил запрос на получение букинга");
         return ResponseEntity.ok(bookingService.getBookingById(bookingId));
     }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,14 +48,23 @@ class BookingServiceImplTest {
     @InjectMocks
     private BookingServiceImpl bookingService;
 
-    private User owner = new User(1L, "Owner", "owner@ya.ru");
-    private User booker = new User(2L, "Booker", "booker@ya.ru");
-    private Item testItem = new Item(1L, "Test Item", "Test Description", true, null,
-            owner, new ItemRequest());
-    private BookingRequest testBookingRequest = new BookingRequest(1L, LocalDateTime.now().plusDays(1),
-            LocalDateTime.now().plusDays(2));
-    private Item unavailableItem = new Item(1L, "Item1", "Description1", false,
-            null, new User(), new ItemRequest());
+    private User owner;
+    private User booker;
+    private Item testItem;
+    private BookingRequest testBookingRequest;
+    private Item unavailableItem;
+
+    @BeforeEach
+    void setUp() {
+        owner = new User(1L, "Owner", "owner@ya.ru");
+        booker = new User(2L, "Booker", "booker@ya.ru");
+        testItem = new Item(1L, "Test Item", "Test Description", true, null,
+                owner, new ItemRequest());
+        testBookingRequest = new BookingRequest(1L, LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2));
+        unavailableItem = new Item(1L, "Item1", "Description1", false,
+                null, new User(), new ItemRequest());
+    }
 
     private Booking createTestBooking(BookingStatus status) {
         Item item = new Item(1L, "Item1", "Description1", true, null,

@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.shareit.constants.Const.REQUEST_HEADER_ID;
 
 @WebMvcTest(ItemController.class)
 @ContextConfiguration(classes = ShareItGateway.class)
@@ -37,10 +39,17 @@ public class ItemControllerTest {
     @MockBean
     private ItemClient itemClient;
 
-    private ItemRequestDto validItemDto = new ItemRequestDto("Test name", "Test Description", true, null);
-    private ItemUpdateRequestDto validUpdateDto = new ItemUpdateRequestDto(1L, new UserRequestDto(), "Test name",
-            "Test description", false);
-    private CommentRequestDto validCommentDto = new CommentRequestDto("Test text");
+    private ItemRequestDto validItemDto;
+    private ItemUpdateRequestDto validUpdateDto;
+    private CommentRequestDto validCommentDto;
+
+    @BeforeEach
+    void setUp() {
+        validItemDto = new ItemRequestDto("Test name", "Test Description", true, null);
+        validUpdateDto = new ItemUpdateRequestDto(1L, new UserRequestDto(), "Test name",
+                "Test description", false);
+        validCommentDto = new CommentRequestDto("Test text");
+    }
 
     @Test
     void addNewItemValidRequestReturnsOk() throws Exception {
@@ -48,7 +57,7 @@ public class ItemControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validItemDto)))
                 .andExpect(status().isOk());
@@ -61,7 +70,7 @@ public class ItemControllerTest {
         invalidDto.setAvailable(true);
 
         mockMvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
@@ -73,7 +82,7 @@ public class ItemControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(patch("/items/1")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validUpdateDto)))
                 .andExpect(status().isOk());
@@ -94,7 +103,7 @@ public class ItemControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/items")
-                        .header("X-Sharer-User-Id", "1"))
+                        .header(REQUEST_HEADER_ID, "1"))
                 .andExpect(status().isOk());
     }
 
@@ -114,7 +123,7 @@ public class ItemControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(post("/items/1/comment")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validCommentDto)))
                 .andExpect(status().isOk());
@@ -126,7 +135,7 @@ public class ItemControllerTest {
         invalidDto.setText("a".repeat(501)); // Превышает максимальную длину
 
         mockMvc.perform(post("/items/1/comment")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());

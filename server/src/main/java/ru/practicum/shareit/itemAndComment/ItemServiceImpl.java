@@ -1,6 +1,6 @@
 package ru.practicum.shareit.itemAndComment;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toItemDto(itemToUpdate);
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public ItemDto getItemById(Long id) {
         log.info("Поступил запрос в сервис на получение предмета");
         Item item = itemRepository.findById(id)
@@ -66,13 +66,13 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toItemDto(item);
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<ItemDto> getAllOwnerItems(Long userId) {
         log.info("Поступил запрос в сервис на получение всех предметов пользователя");
         return itemMapper.toItemDtoList(itemRepository.findByUserId(userId));
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<ItemDto> getItemsBySearch(String text) {
         log.info("Поступил запрос в сервис на получение всех предметов по поиску");
         if (text.isBlank()) return List.of();

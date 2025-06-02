@@ -1,6 +1,6 @@
 package ru.practicum.shareit.request;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestMapper.toItemRequestDto(itemRequestRepository.save(itemRequest));
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public ItemRequestDto getRequestById(Long requestId) {
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Запрос не был найден"));
@@ -37,7 +37,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestMapper.toItemRequestDto(itemRequest);
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getUserRequests(Long userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Такой пользователь не был найден"));
@@ -45,7 +45,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestMapper.toListDto(itemRequestRepository.findByRequesterId(userId));
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getAllRequests() {
         log.info("Получен запрос в сервис на получение всех Requests");
         return itemRequestMapper.toListDto(itemRequestRepository.findAllByOrderByCreatedDesc());

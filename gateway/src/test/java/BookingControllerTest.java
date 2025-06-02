@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.shareit.constants.Const.REQUEST_HEADER_ID;
 
 @WebMvcTest(BookingController.class)
 @ContextConfiguration(classes = ShareItGateway.class)
@@ -35,11 +37,16 @@ class BookingControllerTest {
 
     @MockBean
     private BookingClient bookingClient;
+    private BookingRequestDto validDto;
+    private BookingRequestDto invalidDto;
 
-    private BookingRequestDto validDto = new BookingRequestDto(1L, LocalDateTime.now().plusDays(1),
-            LocalDateTime.now().plusDays(2));
-    private BookingRequestDto invalidDto = new BookingRequestDto(1L, LocalDateTime.now().minusDays(1),
-            LocalDateTime.now().plusDays(1));
+    @BeforeEach
+    void setUp() {
+        validDto = new BookingRequestDto(1L, LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2));
+        invalidDto = new BookingRequestDto(1L, LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1));
+    }
 
     @Test
     void addNewBookingValidRequestReturnsOk() throws Exception {
@@ -47,7 +54,7 @@ class BookingControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isOk());
@@ -56,7 +63,7 @@ class BookingControllerTest {
     @Test
     void addNewBookingInvalidStartReturnsBadRequest() throws Exception {
         mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
@@ -76,7 +83,7 @@ class BookingControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(patch("/bookings/1")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .param("approved", "true"))
                 .andExpect(status().isOk());
     }
@@ -87,7 +94,7 @@ class BookingControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/bookings/1")
-                        .header("X-Sharer-User-Id", "1"))
+                        .header(REQUEST_HEADER_ID, "1"))
                 .andExpect(status().isOk());
     }
 
@@ -97,7 +104,7 @@ class BookingControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", "1"))
+                        .header(REQUEST_HEADER_ID, "1"))
                 .andExpect(status().isOk());
     }
 
@@ -107,7 +114,7 @@ class BookingControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", "1"))
+                        .header(REQUEST_HEADER_ID, "1"))
                 .andExpect(status().isOk());
     }
 

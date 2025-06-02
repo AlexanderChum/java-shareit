@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.shareit.constants.Const.REQUEST_HEADER_ID;
 
 @WebMvcTest(RequestController.class)
 @ContextConfiguration(classes = ShareItGateway.class)
@@ -31,8 +33,12 @@ public class RequestControllerTest {
 
     @MockBean
     private RequestClient requestClient;
+    private ItemRequestDto requestDto;
 
-    private ItemRequestDto requestDto = new ItemRequestDto("Test description");
+    @BeforeEach
+    void setUp() {
+        requestDto = new ItemRequestDto("Test description");
+    }
 
     @Test
     void addNewItemRequestShouldReturnOk() throws Exception {
@@ -40,7 +46,7 @@ public class RequestControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(REQUEST_HEADER_ID, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk());
@@ -60,7 +66,7 @@ public class RequestControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", "1"))
+                        .header(REQUEST_HEADER_ID, "1"))
                 .andExpect(status().isOk());
     }
 

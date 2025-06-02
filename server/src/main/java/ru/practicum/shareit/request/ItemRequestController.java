@@ -18,9 +18,6 @@ import java.util.List;
 
 import static ru.practicum.shareit.constants.Constants.REQUEST_HEADER_ID;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor

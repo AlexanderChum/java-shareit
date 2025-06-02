@@ -1,5 +1,6 @@
 package ru.practicum.shareit;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +12,6 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserUpdateRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -35,14 +35,23 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    private UserDto expectedDto = new UserDto(1L, "Updated Name", "updated@ya.ru");
-    private User testUser = new User(1L, "Test User", "test@ya.ru");
-    private User duplicateEmailUser = new User(2L, "Test User2", "test@ya.ru");
-    private UserDto testUserDto = new UserDto(1L, "Test User", "test@ya.ru");
-    private User updatedUser = new User(1L, "Updated Name", "updated@ya.ru");
+    private UserDto expectedDto;
+    private User testUser;
+    private User duplicateEmailUser;
+    private UserDto testUserDto;
+    private User updatedUser;
 
-    private UserUpdateRequest createTestUpdateRequest() {
-        UserUpdateRequest update = new UserUpdateRequest();
+    @BeforeEach
+    void setUp() {
+        expectedDto = new UserDto(1L, "Updated Name", "updated@ya.ru");
+        testUser = new User(1L, "Test User", "test@ya.ru");
+        duplicateEmailUser = new User(2L, "Test User2", "test@ya.ru");
+        testUserDto = new UserDto(1L, "Test User", "test@ya.ru");
+        updatedUser = new User(1L, "Updated Name", "updated@ya.ru");
+    }
+
+    private UserDto createTestUpdateRequest() {
+        UserDto update = new UserDto();
         update.setName("Updated Name");
         update.setEmail("updated@ya.ru");
         return update;
@@ -71,11 +80,11 @@ class UserServiceImplTest {
 
     @Test
     void updateUserValidDataShouldUpdateFields() {
-        UserUpdateRequest updateRequest = createTestUpdateRequest();
+        UserDto updateRequest = createTestUpdateRequest();
 
         when(userRepository.findAll()).thenReturn(List.of(testUser));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
-        when(userMapper.updateUserFromRequest(any(), any())).thenReturn(updatedUser);
+        when(userMapper.updateUserFromDto(any(), any())).thenReturn(updatedUser);
         when(userMapper.toUserDto(any())).thenReturn(expectedDto);
 
         UserDto result = userService.updateUser(updateRequest, testUser.getId());

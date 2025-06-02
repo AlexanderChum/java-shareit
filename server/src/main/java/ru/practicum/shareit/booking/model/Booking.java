@@ -10,8 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,12 +31,9 @@ public class Booking {
     private Long id;
 
     @Column(name = "start_of_booking")
-    @NotNull(message = "Время начала букирования не может быть пустым")
     private LocalDateTime start;
 
     @Column(name = "end_of_booking")
-    @NotNull(message = "Время окончания букирования не может быть пустым")
-    @Future
     private LocalDateTime end;
 
     @ManyToOne

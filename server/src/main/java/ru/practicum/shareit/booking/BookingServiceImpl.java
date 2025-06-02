@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingDto(bookingToUpdate);
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public BookingDto getBookingById(Long bookingId) {
         log.info("Получен запрос в сервис на получение букинга по id");
         Booking booking = bookingRepository.findById(bookingId)
@@ -63,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingDto(booking);
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<BookingDto> getAllBookingsByUserId(Long userId) {
         log.info("Получен запрос в сервис на получение всех букингов пользователя");
         userRepository.findById(userId)
